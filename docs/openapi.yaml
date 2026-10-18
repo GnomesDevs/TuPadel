@@ -4,3 +4,311 @@ info:
   version: 0.1.0
 servers:
   - url: http://localhost:8080
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        id_usuario:
+          type: integer
+          format: int64
+        correo:
+          type: string
+          format: email
+        nombre:
+          type: string
+        apellido1:
+          type: string
+        apellido2:
+          type: string
+        rol:
+          type: string
+        activo:
+          type: boolean
+        creado_en:
+          type: string
+          format: date-time
+
+    Instalacion:
+      type: object
+      properties:
+        id_instalacion:
+          type: integer
+          format: int64
+        nombre:
+          type: string
+        direccion:
+          type: string
+        localidad:
+          type: string
+        tipo_acceso:
+          type: string
+          enum: [PUBLICA, PRIVADA]
+        codigo_acceso:
+          type: string
+          nullable: true
+        duracion_sesion_minutos:
+          type: integer
+          nullable: true
+        activa:
+          type: boolean
+        creado_en:
+          type: string
+          format: date-time
+
+    Pista:
+      type: object
+      properties:
+        id_pista:
+          type: integer
+          format: int64
+        id_instalacion:
+          type: integer
+          format: int64
+        nombre:
+          type: string
+        tipo:
+          type: string
+        activa:
+          type: boolean
+
+paths:
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                correo:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Credenciales inválidas
+
+  /auth/register:
+    post:
+      summary: Registrar nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+        '400':
+          description: Datos inválidos
+
+  /instalaciones:
+    get:
+      summary: Obtener todas las instalaciones
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de instalaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Instalacion'
+        '401':
+          description: No autenticado
+
+    post:
+      summary: Crear una nueva instalación
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Instalacion'
+      responses:
+        '201':
+          description: Instalación creada
+        '400':
+          description: Datos inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+
+  /instalaciones/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Obtener detalle de una instalación
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Detalle de la instalación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instalacion'
+        '401':
+          description: No autenticado
+        '404':
+          description: Instalación no encontrada
+
+    put:
+      summary: Actualizar una instalación
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Instalacion'
+      responses:
+        '200':
+          description: Instalación actualizada
+        '400':
+          description: Datos inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Instalación no encontrada
+
+    delete:
+      summary: Eliminar una instalación
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Instalación eliminada
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Instalación no encontrada
+
+  /instalaciones/{id}/pistas:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Obtener todas las pistas de una instalación
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de pistas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pista'
+        '401':
+          description: No autenticado
+        '404':
+          description: Instalación no encontrada
+
+    post:
+      summary: Añadir una pista a una instalación
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pista'
+      responses:
+        '201':
+          description: Pista creada
+        '400':
+          description: Datos inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Instalación no encontrada
+
+  /pistas/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int64
+    put:
+      summary: Actualizar una pista
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pista'
+      responses:
+        '200':
+          description: Pista actualizada
+        '400':
+          description: Datos inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Pista no encontrada
+
+    delete:
+      summary: Eliminar una pista
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Pista eliminada
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Pista no encontrada
+
