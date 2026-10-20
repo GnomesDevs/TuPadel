@@ -4,27 +4,18 @@ Interfaz web del panel de administración para ayuntamientos y comunidades.
 
 ## Requisitos
 
-- Node.js (versión LTS)
-- npm
+- Docker Desktop
 
 ## Comandos para arrancar el proyecto
 
-1. Entrar en la carpeta del proyecto:
+1. En la raíz del proyecto abre la terminal y ejecuta:
 
 ```bash
-cd web
+Copy-Item .env.example .env
 ```
 
-2. Instalar/Reinstalar dependencias (por si falta la carpeta node_modules): 
+2. Lanza el Proyecto: 
 
 ```bash 
-npm install
+docker compose up
 ```
-
-3. Iniciar el servidor de desarrollo:
-
-```bash
-npm run dev
-```
-
-4. Accede a `http://localhost:5173` en el navegador para ver la aplicación.
