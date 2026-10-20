@@ -1,0 +1,35 @@
+# Secretos y configuración local
+application-local.properties
+application-local.yml
+.env
+.env.*
+!.env.example
+*.log
+
+# Backend (Java / Maven)
+target/
+
+# Web (Node / React)
+node_modules/
+dist/
+coverage/
+
+# Mobile (Kotlin / Android)
+.gradle/
+build/
+local.properties
+captures/
+*.apk
+*.aab
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
