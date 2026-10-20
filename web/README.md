@@ -15,9 +15,9 @@ Interfaz web del panel de administración para ayuntamientos y comunidades.
 cd web
 ```
 
-2. Instalar dependencias:
+2. Instalar/Reinstalar dependencias (por si falta la carpeta node_modules): 
 
-```bash
+```bash 
 npm install
 ```
 
