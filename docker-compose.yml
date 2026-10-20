@@ -34,5 +34,20 @@ services:
     ports:
       - "8080:8080"
 
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: tupadel-web
+    ports:
+      - "5173:5173"
+    volumes:
+      # Sincroniza los cambios del código en tiempo real
+      - ./web:/app
+      # Protege las dependencias instaladas dentro del contenedor
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Asegura la actualización en vivo (hot reload) en Windows/Mac
+
 volumes:
   db_data:
