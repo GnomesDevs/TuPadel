@@ -1,105 +1,82 @@
--- ============================================
--- TuPadel - Esquema de base de datos
--- Motor: MySQL 8
--- ============================================
+--========================================
+--TuPadel - Esquema de base de datos
+--========================================
 
 CREATE DATABASE IF NOT EXISTS tupadel
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_0900_ai_ci;
-
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_0900_ai_ci;
+  
 USE tupadel;
 
+--======================================
+--Tabla Usuario
+--======================================
+CREATE TABLE Usuario(
+  
+  id_usuario BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(20) NOT NULL,
+  apellido1 VARCHAR(20) NOT NULL,
+  apellido2 VARCHAR(20) NULL,
+  correo VARCHAR(254) NOT NULL,
+  password_hash VARCHAR(64) NOT NULL,
+  dni VARCHAR(20) NOT NULL,
+  rol ENUM('CLIENTE', 'ADMIN_INSTALACION', 'SUPERADMIN')
+    NOT NULL DEFAULT 'CLIENTE',
+  activo BOOLEAN NOT NULL DEFAULT TRUE,
+  creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
 
--- ============================================
--- Tabla: Usuario
--- ============================================
+  CONSTRAINT pk_usuario PRIMARY KEY (id_usuario),
+  CONSTRAINT uq_usuario_correo UNIQUE (correo),
+  CONSTRAINT uq_usuario_dni UNIQUE (dni)
+  ) ENGINE=InnoDB;
 
-CREATE TABLE Usuario (
-    id_usuario BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    correo VARCHAR(254) NOT NULL,
-    dni VARCHAR(20) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    nombre VARCHAR(100) NOT NULL,
-    apellido1 VARCHAR(100) NOT NULL,
-    apellido2 VARCHAR(100) NULL,
-    rol ENUM(
-        'CLIENTE',
-        'ADMIN_INSTALACION',
-        'SUPERADMIN'
-    ) NOT NULL DEFAULT 'CLIENTE',
-    activo BOOLEAN NOT NULL DEFAULT TRUE,
-    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-
-    CONSTRAINT pk_usuario
-        PRIMARY KEY (id_usuario),
-
-    CONSTRAINT uq_usuario_correo
-        UNIQUE (correo),
-
-    CONSTRAINT uq_usuario_dni
-        UNIQUE (dni)
-) ENGINE = InnoDB;
-
-
--- ============================================
--- Tabla: Instalacion
--- ============================================
+--======================================
+--Tabla Instalacion
+--======================================
 
 CREATE TABLE Instalacion (
-    id_instalacion BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(150) NOT NULL,
-    descripcion TEXT NULL,
-    direccion VARCHAR(255) NOT NULL,
-    localidad VARCHAR(100) NOT NULL,
-    codigo_postal VARCHAR(10) NOT NULL,
-    tipo_acceso ENUM('PUBLICA', 'PRIVADA') NOT NULL,
-    codigo_acceso VARCHAR(255) NULL,
-    duracion_sesion_minutos SMALLINT UNSIGNED NULL,
-    activa BOOLEAN NOT NULL DEFAULT TRUE,
-    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
+id_instalacion BEGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(150) NOT NULL,
+  descripcion TEXT NULL,
+  direccion VARCHAR(255) NOT NULL,
+  localidad VARCHAR(100) NOT NULL,
+  tipo_acceso ENUM('PUBLICA', 'PRIVADA') NOT NULL,
+  codigo_acceso VARCHAR(255) NULL,
+  duracion_sesion_minutos SMALLINT UNSIGNED NULL,
+  activa BOOLEAN NOT NULL DEFAULT TRUE,
+  creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
+    ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT pk_instalacion
-        PRIMARY KEY (id_instalacion),
+  CONSTRAINT pk_instalacion PRIMARY KEY (id_instalacion)
+  )ENGINE=InnoBB;
 
-    CONSTRAINT chk_instalacion_duracion
-        CHECK (
-            duracion_sesion_minutos IS NULL
-            OR duracion_sesion_minutos > 0
-        )
-) ENGINE = InnoDB;
+--======================================
+--Tabla Pista
+--======================================
 
+CREATE TABLE Pista(
+  id_pista BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  id_instalacion BIGINIT UNSIGNED NOT NULL,
+  nombre VARCHAR(100) NOT NULL,
+  tipo ENUM('INDOOR', 'OUTDOOR') NOT NULL,
+  activa BOOLEAN NOT NULL DEFAULT TRUE,
+  creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
--- ============================================
--- Tabla: Pista
--- ============================================
-
-CREATE TABLE Pista (
-    id_pista BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    id_instalacion BIGINT UNSIGNED NOT NULL,
-    nombre VARCHAR(100) NOT NULL,
-    tipo ENUM('INDOOR', 'OUTDOOR') NOT NULL,
-    activa BOOLEAN NOT NULL DEFAULT TRUE,
-    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT pk_pista
-        PRIMARY KEY (id_pista),
-
-    CONSTRAINT fk_pista_instalacion
-        FOREIGN KEY (id_instalacion)
-        REFERENCES Instalacion(id_instalacion),
-
-    CONSTRAINT uq_pista_nombre_instalacion
-        UNIQUE (id_instalacion, nombre)
-) ENGINE = InnoDB;
-
+  CONSTRAINT pk_pista PRIMARY KEY (id_pista),
+  
+  CONSTRAINT fk_pista_instalacion
+    FOREIGN KEY (id_instalacion)
+    REFERENCES Instalacion(id_instalacion),
+  
+  CONSTRAINT uq_pista_nombre_instalacion
+    UNIQUE (id_instalacion, nombre)
+  )ENGINE=InnoDB;
 
 -- ============================================
 -- Tabla: UsuarioInstalacion
--- Tabla intermedia N:M
 -- ============================================
 
 CREATE TABLE UsuarioInstalacion (
@@ -123,7 +100,6 @@ CREATE TABLE UsuarioInstalacion (
         FOREIGN KEY (asignado_por)
         REFERENCES Usuario(id_usuario)
 ) ENGINE = InnoDB;
-
 
 -- ============================================
 -- Tabla: FranjaHoraria
@@ -196,5 +172,6 @@ CREATE TABLE Reserva (
             (estado = 'CANCELADA' AND cancelada_en IS NOT NULL)
         )
 ) ENGINE = InnoDB;
+
 
 

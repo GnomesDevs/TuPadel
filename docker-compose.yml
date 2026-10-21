@@ -1,0 +1,53 @@
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?Falta MYSQL_DATABASE en .env}
+      MYSQL_USER: ${MYSQL_USER:?Falta MYSQL_USER en .env}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Falta MYSQL_PASSWORD en .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Falta MYSQL_ROOT_PASSWORD en .env}
+    ports:
+      # Solo accesible desde tu propio equipo, no desde la red
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      # 127.0.0.1 fuerza TCP: así no da "sano" durante la inicialización temporal de MySQL
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+        # depends_on con la condicion de service_healthy hace que el backend espere a que MySQL este listo, sin esto Spring suele fallar en el primer arranque
+    environment:
+      DB_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "8080:8080"
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: tupadel-web
+    ports:
+      - "5173:5173"
+    volumes:
+      # Sincroniza los cambios del código en tiempo real
+      - ./web:/app
+      # Protege las dependencias instaladas dentro del contenedor
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Asegura la actualización en vivo (hot reload) en Windows/Mac
+
+volumes:
+  db_data:
