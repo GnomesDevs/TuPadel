@@ -1,6 +1,6 @@
---========================================
---TuPadel - Esquema de base de datos
---========================================
+-- ========================================
+-- TuPadel - Esquema de base de datos
+-- ========================================
 
 CREATE DATABASE IF NOT EXISTS tupadel
   CHARACTER SET utf8mb4
@@ -8,10 +8,10 @@ CREATE DATABASE IF NOT EXISTS tupadel
   
 USE tupadel;
 
---======================================
---Tabla Usuario
---======================================
-CREATE TABLE Usuario(
+-- ======================================
+-- Tabla Usuario
+-- ======================================
+CREATE TABLE usuario(
   
   id_usuario BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(20) NOT NULL,
@@ -32,12 +32,12 @@ CREATE TABLE Usuario(
   CONSTRAINT uq_usuario_dni UNIQUE (dni)
   ) ENGINE=InnoDB;
 
---======================================
---Tabla Instalacion
---======================================
+-- ======================================
+-- Tabla Instalacion
+-- ======================================
 
-CREATE TABLE Instalacion (
-id_instalacion BEGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE instalacion (
+id_instalacion BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(150) NOT NULL,
   descripcion TEXT NULL,
   direccion VARCHAR(255) NOT NULL,
@@ -51,15 +51,15 @@ id_instalacion BEGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     ON UPDATE CURRENT_TIMESTAMP,
 
   CONSTRAINT pk_instalacion PRIMARY KEY (id_instalacion)
-  )ENGINE=InnoBB;
+  )ENGINE=InnoDB;
 
---======================================
---Tabla Pista
---======================================
+-- ======================================
+-- Tabla Pista
+-- ======================================
 
-CREATE TABLE Pista(
+CREATE TABLE pista(
   id_pista BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  id_instalacion BIGINIT UNSIGNED NOT NULL,
+  id_instalacion BIGINT UNSIGNED NOT NULL,
   nombre VARCHAR(100) NOT NULL,
   tipo ENUM('INDOOR', 'OUTDOOR') NOT NULL,
   activa BOOLEAN NOT NULL DEFAULT TRUE,
@@ -79,7 +79,7 @@ CREATE TABLE Pista(
 -- Tabla: UsuarioInstalacion
 -- ============================================
 
-CREATE TABLE UsuarioInstalacion (
+CREATE TABLE usuarioinstalacion (
     id_usuario BIGINT UNSIGNED NOT NULL,
     id_instalacion BIGINT UNSIGNED NOT NULL,
     asignado_por BIGINT UNSIGNED NOT NULL,
@@ -105,7 +105,7 @@ CREATE TABLE UsuarioInstalacion (
 -- Tabla: FranjaHoraria
 -- ============================================
 
-CREATE TABLE FranjaHoraria (
+CREATE TABLE franjahoraria (
     id_franja BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_pista BIGINT UNSIGNED NOT NULL,
     fecha DATE NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE FranjaHoraria (
 -- Tabla: Reserva
 -- ============================================
 
-CREATE TABLE Reserva (
+CREATE TABLE reserva (
     id_reserva BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_usuario BIGINT UNSIGNED NOT NULL,
     id_franja BIGINT UNSIGNED NOT NULL,
