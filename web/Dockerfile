@@ -1,5 +1,5 @@
 # Usamos una imagen ligera de Node.js en su versión LTS
-FROM node:20-alpine
+FROM node:24-alpine
 
 # Establecemos el directorio de trabajo dentro del contenedor
 WORKDIR /app
