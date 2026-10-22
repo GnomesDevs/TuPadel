@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: TuPadel API
-  version: 0.1.0
+  version: 0.2.0
 servers:
   - url: http://localhost:8080
 
@@ -13,6 +13,9 @@ components:
       bearerFormat: JWT
 
   schemas:
+    # ------------------
+    # Esquemas de Base de Datos / Salida
+    # ------------------
     Usuario:
       type: object
       required: [id_usuario, nombre, apellido1, correo, dni, rol, activo, creado_en, actualizado_en]
@@ -20,6 +23,7 @@ components:
         id_usuario:
           type: integer
           format: int64
+          readOnly: true
         nombre:
           type: string
           maxLength: 20
@@ -45,9 +49,11 @@ components:
         creado_en:
           type: string
           format: date-time
+          readOnly: true
         actualizado_en:
           type: string
           format: date-time
+          readOnly: true
 
     Instalacion:
       type: object
@@ -56,6 +62,7 @@ components:
         id_instalacion:
           type: integer
           format: int64
+          readOnly: true
         nombre:
           type: string
           maxLength: 150
@@ -75,6 +82,7 @@ components:
           type: string
           maxLength: 255
           nullable: true
+          writeOnly: true
         duracion_sesion_minutos:
           type: integer
           nullable: true
@@ -83,9 +91,11 @@ components:
         creado_en:
           type: string
           format: date-time
+          readOnly: true
         actualizado_en:
           type: string
           format: date-time
+          readOnly: true
 
     Pista:
       type: object
@@ -94,9 +104,11 @@ components:
         id_pista:
           type: integer
           format: int64
+          readOnly: true
         id_instalacion:
           type: integer
           format: int64
+          readOnly: true
         nombre:
           type: string
           maxLength: 100
@@ -108,6 +120,7 @@ components:
         creado_en:
           type: string
           format: date-time
+          readOnly: true
 
     UsuarioInstalacion:
       type: object
@@ -125,6 +138,7 @@ components:
         asignado_en:
           type: string
           format: date-time
+          readOnly: true
 
     FranjaHoraria:
       type: object
@@ -133,6 +147,7 @@ components:
         id_franja:
           type: integer
           format: int64
+          readOnly: true
         id_pista:
           type: integer
           format: int64
@@ -155,66 +170,139 @@ components:
         id_reserva:
           type: integer
           format: int64
+          readOnly: true
         id_usuario:
           type: integer
           format: int64
+          readOnly: true
         id_franja:
           type: integer
           format: int64
         estado:
           type: string
           enum: [CONFIRMADA, CANCELADA]
+          readOnly: true
         creada_en:
           type: string
           format: date-time
+          readOnly: true
         cancelada_en:
           type: string
           format: date-time
           nullable: true
 
+    # ------------------
+    # Esquemas de Petición (Requests)
+    # ------------------
+    RegisterRequest:
+      type: object
+      required: [nombre, apellido1, correo, dni, password]
+      properties:
+        nombre:
+          type: string
+          maxLength: 20
+        apellido1:
+          type: string
+          maxLength: 20
+        apellido2:
+          type: string
+          maxLength: 20
+          nullable: true
+        correo:
+          type: string
+          format: email
+          maxLength: 254
+        dni:
+          type: string
+          maxLength: 20
+        password:
+          type: string
+          minLength: 8
+          maxLength: 72
+
+    LoginRequest:
+      type: object
+      required: [correo, password]
+      properties:
+        correo:
+          type: string
+          format: email
+        password:
+          type: string
+
+    CrearReservaRequest:
+      type: object
+      required: [id_franja]
+      properties:
+        id_franja:
+          type: integer
+          format: int64
+
+    # ------------------
+    # Esquemas Adicionales
+    # ------------------
+    UsuarioResumen:
+      type: object
+      required: [id_usuario, nombre, rol]
+      properties:
+        id_usuario:
+          type: integer
+          format: int64
+        nombre:
+          type: string
+        rol:
+          type: string
+          enum: [CLIENTE, ADMIN_INSTALACION, SUPERADMIN]
+
+    LoginResponse:
+      type: object
+      required: [token, usuario]
+      properties:
+        token:
+          type: string
+        usuario:
+          $ref: '#/components/schemas/UsuarioResumen'
+
 paths:
   /auth/login:
     post:
       summary: Iniciar sesión
+      security: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                correo:
-                  type: string
-                  format: email
-                password:
-                  type: string
+              $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
           description: Login exitoso
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Cuerpo de la petición inválido
         '401':
           description: Credenciales inválidas
 
   /auth/register:
     post:
       summary: Registrar nuevo usuario
+      security: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Usuario'
+              $ref: '#/components/schemas/RegisterRequest'
       responses:
         '201':
           description: Usuario creado exitosamente
         '400':
           description: Datos inválidos
+        '409':
+          description: Ya existe un usuario con ese correo o DNI
 
   /instalaciones:
     get:
@@ -248,6 +336,10 @@ paths:
           description: Instalación creada
         '400':
           description: Datos inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
 
   /instalaciones/{id}:
     parameters:
@@ -268,8 +360,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Instalacion'
+        '401':
+          description: No autenticado
         '404':
           description: Instalación no encontrada
+
     put:
       summary: Actualizar una instalación
       security:
@@ -283,6 +378,15 @@ paths:
       responses:
         '200':
           description: Instalación actualizada
+        '400':
+          description: Datos inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Instalación no encontrada
+
     delete:
       summary: Eliminar una instalación
       security:
@@ -290,6 +394,12 @@ paths:
       responses:
         '204':
           description: Instalación eliminada
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Instalación no encontrada
 
   /instalaciones/{id}/pistas:
     parameters:
@@ -312,6 +422,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Pista'
+        '401':
+          description: No autenticado
+        '404':
+          description: Instalación no encontrada
+
     post:
       summary: Añadir una pista a una instalación
       security:
@@ -325,6 +440,14 @@ paths:
       responses:
         '201':
           description: Pista creada
+        '400':
+          description: Datos inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Instalación no encontrada
 
   /instalaciones/{id}/usuarios:
     parameters:
@@ -347,6 +470,12 @@ paths:
       responses:
         '201':
           description: Asignación creada con éxito
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Instalación no encontrada
 
   /pistas/{id}:
     parameters:
@@ -369,6 +498,15 @@ paths:
       responses:
         '200':
           description: Pista actualizada
+        '400':
+          description: Datos inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Pista no encontrada
+
     delete:
       summary: Eliminar una pista
       security:
@@ -376,6 +514,12 @@ paths:
       responses:
         '204':
           description: Pista eliminada
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
+        '404':
+          description: Pista no encontrada
 
   /franjas:
     post:
@@ -393,6 +537,10 @@ paths:
           description: Franja horaria creada
         '400':
           description: Solapamiento de horarios o datos inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Sin permisos de administrador
 
   /reservas:
     post:
@@ -404,9 +552,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Reserva'
+              $ref: '#/components/schemas/CrearReservaRequest'
       responses:
         '201':
           description: Reserva confirmada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reserva'
+        '400':
+          description: Petición inválida
+        '401':
+          description: No autenticado
+        '404':
+          description: La franja no existe
         '409':
           description: La franja ya está reservada
