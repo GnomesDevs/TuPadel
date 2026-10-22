@@ -45,3 +45,5 @@ Base de datos: MySQL.
 - Josep Arrufat
 - Alejandro Martínez
 - Rubén Ginés
+
+<img width="2752" height="1536" alt="GnomesDev" src="https://github.com/user-attachments/assets/5ae4d42f-e69e-4110-809c-f63575422fba" />
