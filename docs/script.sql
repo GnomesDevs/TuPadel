@@ -79,7 +79,7 @@ CREATE TABLE pista(
 -- Tabla: UsuarioInstalacion
 -- ============================================
 
-CREATE TABLE usuarioinstalacion (
+CREATE TABLE usuario_instalacion (
     id_usuario BIGINT UNSIGNED NOT NULL,
     id_instalacion BIGINT UNSIGNED NOT NULL,
     asignado_por BIGINT UNSIGNED NOT NULL,
@@ -105,7 +105,7 @@ CREATE TABLE usuarioinstalacion (
 -- Tabla: FranjaHoraria
 -- ============================================
 
-CREATE TABLE franjahoraria (
+CREATE TABLE franja_horaria (
     id_franja BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_pista BIGINT UNSIGNED NOT NULL,
     fecha DATE NOT NULL,
@@ -160,7 +160,7 @@ CREATE TABLE reserva (
 
     CONSTRAINT fk_reserva_franja
         FOREIGN KEY (id_franja)
-        REFERENCES franjahoraria(id_franja),
+        REFERENCES franja_horaria(id_franja),
 
     CONSTRAINT uq_reserva_franja_activa
         UNIQUE (franja_activa),
