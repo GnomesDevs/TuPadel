@@ -69,7 +69,7 @@ CREATE TABLE pista(
   
   CONSTRAINT fk_pista_instalacion
     FOREIGN KEY (id_instalacion)
-    REFERENCES Instalacion(id_instalacion),
+    REFERENCES instalacion(id_instalacion),
   
   CONSTRAINT uq_pista_nombre_instalacion
     UNIQUE (id_instalacion, nombre)
@@ -79,7 +79,7 @@ CREATE TABLE pista(
 -- Tabla: UsuarioInstalacion
 -- ============================================
 
-CREATE TABLE usuarioinstalacion (
+CREATE TABLE usuario_instalacion (
     id_usuario BIGINT UNSIGNED NOT NULL,
     id_instalacion BIGINT UNSIGNED NOT NULL,
     asignado_por BIGINT UNSIGNED NOT NULL,
@@ -90,22 +90,22 @@ CREATE TABLE usuarioinstalacion (
 
     CONSTRAINT fk_ui_usuario
         FOREIGN KEY (id_usuario)
-        REFERENCES Usuario(id_usuario),
+        REFERENCES usuario(id_usuario),
 
     CONSTRAINT fk_ui_instalacion
         FOREIGN KEY (id_instalacion)
-        REFERENCES Instalacion(id_instalacion),
+        REFERENCES instalacion(id_instalacion),
 
     CONSTRAINT fk_ui_asignado_por
         FOREIGN KEY (asignado_por)
-        REFERENCES Usuario(id_usuario)
+        REFERENCES usuario(id_usuario)
 ) ENGINE = InnoDB;
 
 -- ============================================
 -- Tabla: FranjaHoraria
 -- ============================================
 
-CREATE TABLE franjahoraria (
+CREATE TABLE franja_horaria (
     id_franja BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_pista BIGINT UNSIGNED NOT NULL,
     fecha DATE NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE franjahoraria (
 
     CONSTRAINT fk_franja_pista
         FOREIGN KEY (id_pista)
-        REFERENCES Pista(id_pista),
+        REFERENCES pista(id_pista),
 
     CONSTRAINT uq_franja_pista_fecha_inicio
         UNIQUE (id_pista, fecha, hora_inicio),
@@ -156,11 +156,11 @@ CREATE TABLE reserva (
 
     CONSTRAINT fk_reserva_usuario
         FOREIGN KEY (id_usuario)
-        REFERENCES Usuario(id_usuario),
+        REFERENCES usuario(id_usuario),
 
     CONSTRAINT fk_reserva_franja
         FOREIGN KEY (id_franja)
-        REFERENCES FranjaHoraria(id_franja),
+        REFERENCES franja_horaria(id_franja),
 
     CONSTRAINT uq_reserva_franja_activa
         UNIQUE (franja_activa),
