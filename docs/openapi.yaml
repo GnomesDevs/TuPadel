@@ -1,9 +1,12 @@
 openapi: 3.0.3
 info:
   title: TuPadel API
-  version: 0.2.0
+  version: 1.0.0
+  description: Contrato de API REST para el MVP de TuPadel v1.0.0, basado en el esquema SQL de Rubén.
+
 servers:
   - url: http://localhost:8080
+    description: Servidor local de desarrollo
 
 components:
   securitySchemes:
@@ -14,7 +17,7 @@ components:
 
   schemas:
     # ------------------
-    # Esquemas de Base de Datos / Salida
+    # Esquemas de Entidades (schema.sql)
     # ------------------
     Usuario:
       type: object
@@ -24,36 +27,46 @@ components:
           type: integer
           format: int64
           readOnly: true
+          example: 1
         nombre:
           type: string
           maxLength: 20
+          example: "Juan"
         apellido1:
           type: string
           maxLength: 20
+          example: "Pérez"
         apellido2:
           type: string
           maxLength: 20
           nullable: true
+          example: "García"
         correo:
           type: string
           format: email
           maxLength: 254
+          example: "juan.perez@example.com"
         dni:
           type: string
           maxLength: 20
+          example: "12345678Z"
         rol:
           type: string
           enum: [CLIENTE, ADMIN_INSTALACION, SUPERADMIN]
+          example: "CLIENTE"
         activo:
           type: boolean
+          example: true
         creado_en:
           type: string
           format: date-time
           readOnly: true
+          example: "2026-10-15T10:00:00Z"
         actualizado_en:
           type: string
           format: date-time
           readOnly: true
+          example: "2026-10-15T10:00:00Z"
 
     Instalacion:
       type: object
@@ -63,39 +76,50 @@ components:
           type: integer
           format: int64
           readOnly: true
+          example: 5
         nombre:
           type: string
           maxLength: 150
+          example: "Club de Pádel Central"
         descripcion:
           type: string
           nullable: true
+          example: "Instalación deportiva con 4 pistas de cristal."
         direccion:
           type: string
           maxLength: 255
+          example: "Calle Mayor 12"
         localidad:
           type: string
           maxLength: 100
+          example: "Castellón"
         tipo_acceso:
           type: string
           enum: [PUBLICA, PRIVADA]
+          example: "PRIVADA"
         codigo_acceso:
           type: string
           maxLength: 255
           nullable: true
           writeOnly: true
+          example: "FINCA2026"
         duracion_sesion_minutos:
           type: integer
           nullable: true
+          example: 90
         activa:
           type: boolean
+          example: true
         creado_en:
           type: string
           format: date-time
           readOnly: true
+          example: "2026-10-01T08:00:00Z"
         actualizado_en:
           type: string
           format: date-time
           readOnly: true
+          example: "2026-10-01T08:00:00Z"
 
     Pista:
       type: object
@@ -105,22 +129,27 @@ components:
           type: integer
           format: int64
           readOnly: true
+          example: 12
         id_instalacion:
           type: integer
           format: int64
-          readOnly: true
+          example: 5
         nombre:
           type: string
           maxLength: 100
+          example: "Pista 1 - Cristal"
         tipo:
           type: string
           enum: [INDOOR, OUTDOOR]
+          example: "OUTDOOR"
         activa:
           type: boolean
+          example: true
         creado_en:
           type: string
           format: date-time
           readOnly: true
+          example: "2026-10-01T08:30:00Z"
 
     UsuarioInstalacion:
       type: object
@@ -129,16 +158,20 @@ components:
         id_usuario:
           type: integer
           format: int64
+          example: 1
         id_instalacion:
           type: integer
           format: int64
+          example: 5
         asignado_por:
           type: integer
           format: int64
+          example: 2
         asignado_en:
           type: string
           format: date-time
           readOnly: true
+          example: "2026-10-20T11:00:00Z"
 
     FranjaHoraria:
       type: object
@@ -148,20 +181,25 @@ components:
           type: integer
           format: int64
           readOnly: true
+          example: 101
         id_pista:
           type: integer
           format: int64
+          example: 12
         fecha:
           type: string
           format: date
+          example: "2026-11-10"
         hora_inicio:
           type: string
-          format: time
           example: "10:00:00"
         hora_fin:
           type: string
-          format: time
           example: "11:30:00"
+        disponible:
+          type: boolean
+          description: Campo calculado en lecturas para conocer la disponibilidad.
+          example: true
 
     Reserva:
       type: object
@@ -171,28 +209,34 @@ components:
           type: integer
           format: int64
           readOnly: true
+          example: 501
         id_usuario:
           type: integer
           format: int64
           readOnly: true
+          example: 1
         id_franja:
           type: integer
           format: int64
+          example: 101
         estado:
           type: string
           enum: [CONFIRMADA, CANCELADA]
           readOnly: true
+          example: "CONFIRMADA"
         creada_en:
           type: string
           format: date-time
           readOnly: true
+          example: "2026-11-03T09:00:00Z"
         cancelada_en:
           type: string
           format: date-time
           nullable: true
+          example: null
 
     # ------------------
-    # Esquemas de Petición (Requests)
+    # Esquemas DTO (Peticiones / Respuestas)
     # ------------------
     RegisterRequest:
       type: object
@@ -201,24 +245,30 @@ components:
         nombre:
           type: string
           maxLength: 20
+          example: "Juan"
         apellido1:
           type: string
           maxLength: 20
+          example: "Pérez"
         apellido2:
           type: string
           maxLength: 20
           nullable: true
+          example: "García"
         correo:
           type: string
           format: email
           maxLength: 254
+          example: "juan.perez@example.com"
         dni:
           type: string
           maxLength: 20
+          example: "12345678Z"
         password:
           type: string
           minLength: 8
           maxLength: 72
+          example: "SecretPass123"
 
     LoginRequest:
       type: object
@@ -227,8 +277,36 @@ components:
         correo:
           type: string
           format: email
+          example: "juan.perez@example.com"
         password:
           type: string
+          example: "SecretPass123"
+
+    UsuarioResumen:
+      type: object
+      required: [id_usuario, nombre, rol]
+      properties:
+        id_usuario:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          example: "Juan"
+        rol:
+          type: string
+          enum: [CLIENTE, ADMIN_INSTALACION, SUPERADMIN]
+          example: "CLIENTE"
+
+    LoginResponse:
+      type: object
+      required: [token, usuario]
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        usuario:
+          $ref: '#/components/schemas/UsuarioResumen'
 
     CrearReservaRequest:
       type: object
@@ -237,36 +315,46 @@ components:
         id_franja:
           type: integer
           format: int64
+          example: 101
 
-    # ------------------
-    # Esquemas Adicionales
-    # ------------------
-    UsuarioResumen:
+    ValidarCodigoRequest:
       type: object
-      required: [id_usuario, nombre, rol]
+      required: [codigo_acceso]
       properties:
-        id_usuario:
+        codigo_acceso:
+          type: string
+          example: "FINCA2026"
+
+    ValidarCodigoResponse:
+      type: object
+      required: [valido, mensaje]
+      properties:
+        valido:
+          type: boolean
+          example: true
+        mensaje:
+          type: string
+          example: "Código de acceso verificado correctamente"
+
+    ErrorDetalle:
+      type: object
+      required: [codigo, mensaje]
+      properties:
+        codigo:
           type: integer
-          format: int64
-        nombre:
+          example: 409
+        mensaje:
           type: string
-        rol:
-          type: string
-          enum: [CLIENTE, ADMIN_INSTALACION, SUPERADMIN]
-
-    LoginResponse:
-      type: object
-      required: [token, usuario]
-      properties:
-        token:
-          type: string
-        usuario:
-          $ref: '#/components/schemas/UsuarioResumen'
+          example: "La franja horaria seleccionada ya se encuentra reservada."
 
 paths:
+  # ------------------
+  # Autenticación
+  # ------------------
   /auth/login:
     post:
       summary: Iniciar sesión
+      description: "Acceso público. Retorna un JWT válido junto con la información resumida del usuario."
       security: []
       requestBody:
         required: true
@@ -282,13 +370,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/LoginResponse'
         '400':
-          description: Cuerpo de la petición inválido
+          description: Petición incorrecta o datos faltantes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetalle'
         '401':
           description: Credenciales inválidas
 
   /auth/register:
     post:
       summary: Registrar nuevo usuario
+      description: "Acceso público. Permite el registro inicial de un usuario tipo CLIENTE."
       security: []
       requestBody:
         required: true
@@ -298,20 +391,32 @@ paths:
               $ref: '#/components/schemas/RegisterRequest'
       responses:
         '201':
-          description: Usuario creado exitosamente
+          description: Usuario registrado exitosamente
         '400':
-          description: Datos inválidos
+          description: Formato de datos no válido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetalle'
         '409':
-          description: Ya existe un usuario con ese correo o DNI
+          description: Conflicto - Ya existe un usuario con ese correo o DNI
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetalle'
 
+  # ------------------
+  # Instalaciones y Fincas Privadas
+  # ------------------
   /instalaciones:
     get:
       summary: Obtener todas las instalaciones
+      description: "Roles autorizados: CLIENTE, ADMIN_INSTALACION, SUPERADMIN."
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: Lista de instalaciones
+          description: Lista de instalaciones obtenida
           content:
             application/json:
               schema:
@@ -319,10 +424,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Instalacion'
         '401':
-          description: No autenticado
+          description: Token no enviado o caducado
 
     post:
       summary: Crear una nueva instalación
+      description: "Roles autorizados: SUPERADMIN."
       security:
         - bearerAuth: []
       requestBody:
@@ -335,11 +441,11 @@ paths:
         '201':
           description: Instalación creada
         '400':
-          description: Datos inválidos
+          description: Datos de instalación no válidos
         '401':
           description: No autenticado
         '403':
-          description: Sin permisos de administrador
+          description: No posee rol SUPERADMIN
 
   /instalaciones/{id}:
     parameters:
@@ -351,6 +457,7 @@ paths:
           format: int64
     get:
       summary: Obtener detalle de una instalación
+      description: "Roles autorizados: CLIENTE, ADMIN_INSTALACION, SUPERADMIN."
       security:
         - bearerAuth: []
       responses:
@@ -367,6 +474,7 @@ paths:
 
     put:
       summary: Actualizar una instalación
+      description: "Roles autorizados: ADMIN_INSTALACION, SUPERADMIN."
       security:
         - bearerAuth: []
       requestBody:
@@ -377,18 +485,19 @@ paths:
               $ref: '#/components/schemas/Instalacion'
       responses:
         '200':
-          description: Instalación actualizada
+          description: Instalación actualizada correctamente
         '400':
-          description: Datos inválidos
+          description: Datos de entrada no válidos
         '401':
           description: No autenticado
         '403':
-          description: Sin permisos de administrador
+          description: Sin permisos para modificar la instalación
         '404':
           description: Instalación no encontrada
 
     delete:
       summary: Eliminar una instalación
+      description: "Roles autorizados: SUPERADMIN."
       security:
         - bearerAuth: []
       responses:
@@ -397,7 +506,44 @@ paths:
         '401':
           description: No autenticado
         '403':
-          description: Sin permisos de administrador
+          description: Requiere permisos de SUPERADMIN
+        '404':
+          description: Instalación no encontrada
+
+  /instalaciones/{id}/validar-codigo:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int64
+    post:
+      summary: Validar código de acceso para recinto o finca privada
+      description: "Roles autorizados: CLIENTE. Permite validar la clave de una instalación privada para poder visualizar o reservar sus pistas."
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidarCodigoRequest'
+      responses:
+        '200':
+          description: Verificación del código completada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidarCodigoResponse'
+        '400':
+          description: Código de acceso incorrecto o no enviado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetalle'
+        '401':
+          description: No autenticado
         '404':
           description: Instalación no encontrada
 
@@ -411,11 +557,12 @@ paths:
           format: int64
     get:
       summary: Obtener todas las pistas de una instalación
+      description: "Roles autorizados: CLIENTE, ADMIN_INSTALACION, SUPERADMIN."
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: Lista de pistas
+          description: Lista de pistas de la instalación
           content:
             application/json:
               schema:
@@ -429,6 +576,7 @@ paths:
 
     post:
       summary: Añadir una pista a una instalación
+      description: "Roles autorizados: ADMIN_INSTALACION, SUPERADMIN."
       security:
         - bearerAuth: []
       requestBody:
@@ -441,11 +589,11 @@ paths:
         '201':
           description: Pista creada
         '400':
-          description: Datos inválidos
+          description: Datos de pista no válidos
         '401':
           description: No autenticado
         '403':
-          description: Sin permisos de administrador
+          description: Sin permisos de administración
         '404':
           description: Instalación no encontrada
 
@@ -458,7 +606,8 @@ paths:
           type: integer
           format: int64
     post:
-      summary: Asignar un usuario a una instalación (Tabla intermedia)
+      summary: Asignar un usuario gestor a una instalación
+      description: "Roles autorizados: SUPERADMIN."
       security:
         - bearerAuth: []
       requestBody:
@@ -469,14 +618,19 @@ paths:
               $ref: '#/components/schemas/UsuarioInstalacion'
       responses:
         '201':
-          description: Asignación creada con éxito
+          description: Asignación registrada con éxito
+        '400':
+          description: Petición inválida
         '401':
           description: No autenticado
         '403':
-          description: Sin permisos de administrador
+          description: Requiere rol SUPERADMIN
         '404':
-          description: Instalación no encontrada
+          description: Instalación o Usuario no encontrado
 
+  # ------------------
+  # Pistas y Franjas Horarias
+  # ------------------
   /pistas/{id}:
     parameters:
       - in: path
@@ -487,6 +641,7 @@ paths:
           format: int64
     put:
       summary: Actualizar una pista
+      description: "Roles autorizados: ADMIN_INSTALACION, SUPERADMIN."
       security:
         - bearerAuth: []
       requestBody:
@@ -503,12 +658,13 @@ paths:
         '401':
           description: No autenticado
         '403':
-          description: Sin permisos de administrador
+          description: Sin permisos suficientes
         '404':
           description: Pista no encontrada
 
     delete:
       summary: Eliminar una pista
+      description: "Roles autorizados: ADMIN_INSTALACION, SUPERADMIN."
       security:
         - bearerAuth: []
       responses:
@@ -517,13 +673,51 @@ paths:
         '401':
           description: No autenticado
         '403':
-          description: Sin permisos de administrador
+          description: Sin permisos suficientes
+        '404':
+          description: Pista no encontrada
+
+  /pistas/{id}/franjas:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - in: query
+        name: fecha
+        required: true
+        schema:
+          type: string
+          format: date
+        example: "2026-11-10"
+        description: Fecha de la consulta en formato YYYY-MM-DD.
+    get:
+      summary: Consultar la disponibilidad y franjas horarias de una pista
+      description: "Roles autorizados: CLIENTE, ADMIN_INSTALACION, SUPERADMIN."
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de franjas horarias devuelta correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FranjaHoraria'
+        '400':
+          description: Parámetro de fecha con formato erróneo
+        '401':
+          description: No autenticado
         '404':
           description: Pista no encontrada
 
   /franjas:
     post:
-      summary: Crear una nueva franja horaria para una pista
+      summary: Crear una franja horaria para una pista
+      description: "Roles autorizados: ADMIN_INSTALACION, SUPERADMIN."
       security:
         - bearerAuth: []
       requestBody:
@@ -536,15 +730,36 @@ paths:
         '201':
           description: Franja horaria creada
         '400':
-          description: Solapamiento de horarios o datos inválidos
+          description: Datos inválidos o incoherencia en las horas (hora_fin <= hora_inicio)
         '401':
           description: No autenticado
         '403':
-          description: Sin permisos de administrador
+          description: Sin permisos suficientes
 
+  # ------------------
+  # Reservas
+  # ------------------
   /reservas:
+    get:
+      summary: Listar las reservas del usuario autenticado
+      description: "Roles autorizados: CLIENTE. Retorna el historial propio de reservas."
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de reservas propia del usuario
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reserva'
+        '401':
+          description: No autenticado
+
     post:
       summary: Crear una reserva de pista
+      description: "Roles autorizados: CLIENTE. Asigna una franja disponible al usuario logueado."
       security:
         - bearerAuth: []
       requestBody:
@@ -555,16 +770,66 @@ paths:
               $ref: '#/components/schemas/CrearReservaRequest'
       responses:
         '201':
-          description: Reserva confirmada exitosamente
+          description: Reserva realizada y confirmada
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Reserva'
         '400':
-          description: Petición inválida
+          description: Datos de la petición o id_franja no válidos
         '401':
           description: No autenticado
         '404':
-          description: La franja no existe
+          description: La franja horaria especificada no existe
         '409':
-          description: La franja ya está reservada
+          description: Conflict - La franja ya está reservada por otro usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetalle'
+
+  /reservas/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Consultar una reserva por ID
+      description: "Roles autorizados: CLIENTE (propietario de la reserva), ADMIN_INSTALACION, SUPERADMIN."
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Información detallada de la reserva
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reserva'
+        '401':
+          description: No autenticado
+        '403':
+          description: La reserva pertenece a otro usuario
+        '404':
+          description: Reserva no encontrada
+
+    delete:
+      summary: Cancelar una reserva
+      description: "Roles autorizados: CLIENTE (propietario de la reserva), ADMIN_INSTALACION, SUPERADMIN."
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Reserva cancelada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reserva'
+        '401':
+          description: No autenticado
+        '403':
+          description: No posee autorización para cancelar la reserva
+        '404':
+          description: Reserva no encontrada
