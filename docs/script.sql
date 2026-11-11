@@ -51,6 +51,7 @@ id_instalacion BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     ON UPDATE CURRENT_TIMESTAMP,
 
   CONSTRAINT pk_instalacion PRIMARY KEY (id_instalacion)
+  CONSTRAINT uq_instalacion_nombre UNIQUE (nombre)
   )ENGINE=InnoDB;
 
 -- ======================================
