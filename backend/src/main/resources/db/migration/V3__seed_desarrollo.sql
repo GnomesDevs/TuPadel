@@ -1,6 +1,6 @@
 -- ============================================
 -- TuPadel - Datos de prueba (SEED)
--- Archivo: docs/seed.sql
+-- Archivo: backend/src/main/resources/db/migration/V3__seed_desarrollo.sql
 -- ============================================
 
 
@@ -24,7 +24,7 @@ INSERT INTO instalacion (
     'Calle Colon 25',
     'Valencia',
     'PUBLICA',
-    'NULL',
+    NULL,
     90,
     TRUE
 ),
