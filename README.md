@@ -31,6 +31,33 @@ Base de datos: MySQL.
 5. Arranca la web desde `web/` con `npm install` y después `npm run dev`.
 6. Abre `mobile/` con Android Studio y ejecútalo en un emulador.
 
+## Cambios de esta rama (tarea-9-10-11)
+
+- Flyway: migración `V3__seed_desarrollo.sql` en `backend/src/main/resources/db/migration/` con 2 instalaciones, 4 pistas y un usuario de prueba. Las pistas buscan su instalación por nombre, no por id fijo.
+- Autenticación: `POST /auth/register` (201) y `POST /auth/login`, que devuelve un JWT con los datos resumidos del usuario.
+- Errores de la API: cuerpo `{codigo, mensaje}` (esquema `ErrorDetalle` del OpenAPI) en los 400 y 409. Un correo o contraseña incorrectos devuelven siempre el mismo 401.
+- `GET /instalaciones`: protegido con JWT (401 sin token, 200 con token). No devuelve `codigo_acceso`.
+- CORS: solo se permite el origen `http://localhost:5173`, con los métodos GET, POST, PUT, DELETE y OPTIONS y las cabeceras `Authorization` y `Content-Type`.
+- Configuración de seguridad y de la base de datos en `SecurityConfig`, `application.properties`, `docker-compose.yml` y `.env.example`. La clave de firma del JWT va en la variable `JWT_SECRET` (mínimo 32 caracteres, sin valor real en `.env.example`).
+
+## Usuario de prueba (SOLO PARA DESARROLLO)
+
+El seed `V3__seed_desarrollo.sql` crea este usuario. No existe en producción y estas credenciales no se deben usar fuera de tu entorno local.
+
+| Campo | Valor |
+|-------|-------|
+| Correo | `carlos.martinez@tupadel.test` |
+| Contraseña | `<contraseña-del-seed>` |
+| Rol | `CLIENTE` |
+
+Prueba rápida con `curl.exe`:
+
+```powershell
+curl.exe -X POST http://localhost:8080/auth/login -H "Content-Type: application/json" -d "{\"correo\":\"carlos.martinez@tupadel.test\",\"password\":\"<contraseña-del-seed>\"}"
+curl.exe -i http://localhost:8080/instalaciones
+curl.exe -i http://localhost:8080/instalaciones -H "Authorization: Bearer <token>"
+```
+
 ## Flujo de trabajo
 
 - `main`: versión estable para entregas.
