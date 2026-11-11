@@ -31,6 +31,7 @@ services:
       DB_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE}
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Falta JWT_SECRET en .env}
     ports:
       - "8080:8080"
 
