@@ -102,7 +102,7 @@ INSERT INTO usuario(
     'Rodriguez',
     'Lopez',
     'admin@admin.com',
-    '$2a12$VOyYkDWRPht/0FgTOstBku9qtqS3v1nDOjOFyxE4FkOZxm8ZS4Lsa',
+    '$2a$12$VOyYkDWRPht/0FgTOstBku9qtqS3v1nDOjOFyxE4FkOZxm8ZS4Lsa',
     '11111111Z',
     'ADMIN_INSTALACION',
     TRUE
@@ -112,7 +112,7 @@ INSERT INTO usuario(
     'Roig',
     'Navarro',
     'admin@tupadel.es',
-    '$2a12$VOyYkDWRPht/0FgTOstBku9qtqS3v1nDOjOFyxE4FkOZxm8ZS4Lsa',
+    '$2a$12$VOyYkDWRPht/0FgTOstBku9qtqS3v1nDOjOFyxE4FkOZxm8ZS4Lsa',
     '33333333Z',
     'ADMIN_INSTALACION',
     FALSE
@@ -122,7 +122,7 @@ INSERT INTO usuario(
     'Rodriguez',
     'Lopez',
     'superadmin@admin.com',
-    '$2a12$Y7Z/TWOsHYDfddUihq8k3Om6rztGrocIPXgrny5NpnAbPcuHONTEy',
+    '$2a$12$Y7Z/TWOsHYDfddUihq8k3Om6rztGrocIPXgrny5NpnAbPcuHONTEy',
     '22222222Z',
     'SUPERADMIN',
     TRUE
