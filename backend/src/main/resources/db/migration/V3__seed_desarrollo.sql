@@ -108,6 +108,16 @@ INSERT INTO usuario(
     TRUE
 ),
 (
+    'Pepa',
+    'Roig',
+    'Navarro',
+    'admin@tupadel.es',
+    '$2a12$VOyYkDWRPht/0FgTOstBku9qtqS3v1nDOjOFyxE4FkOZxm8ZS4Lsa',
+    '33333333Z',
+    'ADMIN_INSTALACION',
+    FALSE
+),
+(
     'Pepe',
     'Rodriguez',
     'Lopez',
