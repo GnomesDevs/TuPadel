@@ -96,4 +96,24 @@ INSERT INTO usuario(
     '12345678Z',
     'CLIENTE',
     TRUE
+),
+(
+    'Pepe',
+    'Rodriguez',
+    'Lopez',
+    'admin@admin.com',
+    '$2a12$VOyYkDWRPht/0FgTOstBku9qtqS3v1nDOjOFyxE4FkOZxm8ZS4Lsa',
+    '11111111Z',
+    'ADMIN_INSTALACION',
+    TRUE
+),
+(
+    'Pepe',
+    'Rodriguez',
+    'Lopez',
+    'superadmin@admin.com',
+    '$2a12$Y7Z/TWOsHYDfddUihq8k3Om6rztGrocIPXgrny5NpnAbPcuHONTEy',
+    '22222222Z',
+    'SUPERADMIN',
+    TRUE
 );
