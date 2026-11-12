@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
   });
 
   const login = (newToken, userData) => {
-    if (!ROLES_PERMITIDOS.includes(data.usuario.rol)) {
+    if (!ROLES_PERMITIDOS.includes(userData.rol)) {
       throw new Error('Acceso denegado: esta web es exclusiva para administradores.');
     } 
 
