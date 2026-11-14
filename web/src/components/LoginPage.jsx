@@ -25,7 +25,7 @@ export function LoginPage() {
       login(data.token, data.usuario);
       navigate('/panel');
     } catch (err) {
-      setError(err.message || 'Error al iniciar sesión');
+        setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -161,7 +161,7 @@ export function LoginPage() {
                 <path d="M12 7.5v5.5M12 16.4v.1" />
               </svg>
               <div>
-                <strong>Correo o contraseña incorecto.</strong>
+                <strong>{error}</strong>
               </div>
             </div>
           )}
