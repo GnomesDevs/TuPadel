@@ -1,34 +1,20 @@
-/*
-* TuPadel - Proyecto de android
-*
-* Fecha de creación: 18/10/2026
-* Fecha ultima modificación: 18/10/2026
-* Modificado por: Alejandro Martinez
-* Nuevas Implementaciones:
-* 1- Preview en diferentes tamaños de pantallas y configuraciones
-* 2- Vista previa en modo oscuro
-* 3- composable: es una anotación de Kotlin que le indica al compilador que esta función no devuelve
-* un valor convencional, sino que dibuja un elemento en la interfaz de usuario
-*
-* */
-
-
-
 package com.example.tupadel
 
-import android.content.res.Configuration
-import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tupadel.ui.theme.TuPadelTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,34 +24,66 @@ class MainActivity : ComponentActivity() {
         setContent {
             TuPadelTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    // Contenedor que respeta los bordes de la pantalla del móvil
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        // AQUÍ ES DONDE LLAMAMOS A TU PANTALLA
+                        LoginScreen()
+                    }
                 }
             }
         }
     }
 }
-/* composable es una función de Jetpack Compose en Kotlin
- Es la unidad básica con la que se construyen las pantallas en las aplicaciones Android modernas*/
+
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hola TuPadel!",
-        modifier = modifier
-    )
-}
-/* Esto es para ver la vista previa en diferentes pantallas y configuraciones */
-// Vista previa estándar
-@Preview(name = "Móvil Estándar", showBackground = true, device = Devices.PIXEL_8)
-// Vista previa en pantalla pequeña
-@Preview(name = "Móvil Pequeño", showBackground = true, device = "spec:width=360dp,height=640dp")
-// Vista previa en modo oscuro
-@Preview(name = "Modo Oscuro", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun GreetingPreview() {
-    TuPadelTheme {
-        Greeting("Hola TuPadel")
+fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Campo de Correo
+        OutlinedTextField(
+            value = viewModel.email,
+            onValueChange = { viewModel.email = it },
+            label = { Text("Correo electrónico") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Campo de Contraseña
+        OutlinedTextField(
+            value = viewModel.password,
+            onValueChange = { viewModel.password = it },
+            label = { Text("Contraseña") },
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botón de Entrar
+        Button(
+            onClick = { viewModel.onLoginClick() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Entrar")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Mensaje de Error (solo se muestra si el estado es Error)
+        if (viewModel.uiState is LoginUiState.Error) {
+            val errorMessage = (viewModel.uiState as LoginUiState.Error).message
+            Text(text = errorMessage, color = Color.Red)
+        }
+
+        // Mensaje de Éxito temporal
+        if (viewModel.uiState is LoginUiState.Success) {
+            Text(text = "¡Login simulado con éxito!", color = Color.Green)
+        }
     }
 }
